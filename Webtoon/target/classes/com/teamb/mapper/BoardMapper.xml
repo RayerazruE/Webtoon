@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.teamb.mapper.BoardMapper">
+
+	<!--게시글 불러오기 전체 조회 -->
+	<select id="getlist" resultType="com.teamb.domain.BoardVO">
+	<![CDATA[
+		select * from board where board_num > 0 
+		]]>
+	</select>
+	
+	<!--게시글 작성  보드넘버 시퀀스 부여-->
+	<insert id="insert">
+		insert into
+					board (board_num, user_id, title, board_content, board_regdate, board_w_updatedate)
+		values
+					(board_seq.nextval, #{user_id}, #{title}, #{board_content}, sysdate, sysdate)			
+	</insert>
+	
+	<!--게시글 작성 -->
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="board_num" order="BEFORE" resultType="long">
+			select board_seq.nextval from dual
+		</selectKey>
+	
+		insert into
+					board (board_num, user_id, title, board_content, board_regdate, board_w_updatedate)
+		values
+						(#{board_num}, #{user_id}, #{title}, #{board_content}, sysdate, sysdate)
+	</insert>
+	
+	<!--게시글 하나 상세 조회, 보드넘버 통해서  -->
+	<select id="read" resultType="com.teamb.domain.BoardVO">
+		select * from board where board_num = #{board_num}
+	</select>
+	
+	<!--게시글 삭제, 보드넘버를 통해서 -->
+	<delete id="delete">
+		delete board where board_num = #{board_num}
+	</delete>
+	
+	<!--게시글 업데이트 -->
+	<update id="update">
+		update
+				board
+		set
+				user_id= #{user_id}, title= #{title}, board_content= #{board_content}, board_w_updatedate = sysdate
+		where
+				board_num = #{board_num}
+	
+	</update>
+</mapper>

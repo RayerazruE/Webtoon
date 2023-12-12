@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.teamb.mapper.WebtoonMapper">
+
+	<select id="getWebtoonList"
+		resultType="com.teamb.domain.WebtoonVO">
+      <![CDATA[
+         SELECT A.webtoon_id, webtoon_title, thumbnail, webtoon_ranking, webtoon_popularity, MIN(C.platform_code) AS min_platform_code
+FROM webtoon A
+JOIN webtoon_ranking B ON A.webtoon_id = B.webtoon_id
+JOIN platformcharacter C ON A.webtoon_id = C.webtoon_id
+GROUP BY A.webtoon_id, webtoon_title, thumbnail, webtoon_ranking, webtoon_popularity
+ORDER BY webtoon_ranking
+      ]]>
+	</select>
+
+	<select id="WebtoonSearch"
+		resultType="com.teamb.domain.WebtoonVO">
+		select distinct a.webtoon_id, a.webtoon_title, a.thumbnail,
+		k.webtoon_ranking,
+		(SELECT MIN(d.platform_code) FROM WT_WD_PL d WHERE
+		d.webtoon_id =
+		a.webtoon_id) AS min_platform_code
+		from webtoon A join wt_gen B on A.webtoon_id = B.webtoon_id
+					   join WT_WD_PL D on a.webtoon_id = d.webtoon_id
+					   join platformCharacter G on a.webtoon_id = g.webtoon_id
+					   join wt_aut I on a.webtoon_id = i.webtoon_id
+					   join author J on i.author_id = j.author_id
+					   join webtoon_ranking K on a.webtoon_id = k.webtoon_id
+		where ( a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[0]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[1]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[2]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[3]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[4]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[5]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[6]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[7]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[8]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[9]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[10]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[11]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[12]})
+		and a.webtoon_id in (select webtoon_id from wt_gen where genre_code = #{genre_code[13]}))
+		and
+		( d.platform_code =
+		#{platform_code[0]}
+		or d.platform_code = #{platform_code[1]}
+		or
+		d.platform_code = #{platform_code[2]})
+		and
+		( g.payment_code =
+		#{payment_code[0]}
+		or g.payment_code = #{payment_code[1]}
+		or
+		g.payment_code = #{payment_code[2]})
+		and
+		( d.WEEKDAY_code =
+		#{weekday_code[0]}
+		or d.WEEKDAY_code = #{weekday_code[1]}
+		or
+		d.WEEKDAY_code = #{weekday_code[2]}
+		or d.WEEKDAY_code =
+		#{weekday_code[3]}
+		or d.WEEKDAY_code = #{weekday_code[4]}
+		or
+		d.WEEKDAY_code = #{weekday_code[5]}
+		or d.WEEKDAY_code =
+		#{weekday_code[6]}
+		or d.WEEKDAY_code = #{weekday_code[7]}
+		or
+		d.WEEKDAY_code = #{weekday_code[8]}
+		)
+		and
+		(
+		author_name like
+		#{author_name})
+		and
+		( webtoon_title like
+		#{webtoon_title})
+		order by
+		webtoon_ranking
+	</select>
+
+	<select id="WebtoonSearch2"
+		resultType="com.teamb.domain.WebtoonVO">
+		select distinct a.webtoon_id, a.webtoon_title, a.thumbnail,
+		k.webtoon_ranking,
+		(SELECT MIN(d.platform_code) FROM WT_WD_PL d WHERE
+		d.webtoon_id =
+		a.webtoon_id) AS min_platform_code
+		from webtoon A join
+		wt_gen B on A.webtoon_id = B.webtoon_id
+		join WT_WD_PL D on a.webtoon_id
+		= d.webtoon_id
+		join platformCharacter G on a.webtoon_id = g.webtoon_id
+		join wt_aut I on a.webtoon_id = i.webtoon_id
+		join author J on
+		i.author_id = j.author_id
+		join webtoon_ranking K on a.webtoon_id =
+		k.webtoon_id
+		where ( d.platform_code = #{platform_code[0]}
+		or
+		d.platform_code = #{platform_code[1]}
+		or d.platform_code =
+		#{platform_code[2]})
+		and
+		( g.payment_code = #{payment_code[0]}
+		or
+		g.payment_code = #{payment_code[1]}
+		or g.payment_code =
+		#{payment_code[2]})
+		and
+		( d.WEEKDAY_code = #{weekday_code[0]}
+		or
+		d.WEEKDAY_code = #{weekday_code[1]}
+		or d.WEEKDAY_code =
+		#{weekday_code[2]}
+		or d.WEEKDAY_code = #{weekday_code[3]}
+		or
+		d.WEEKDAY_code = #{weekday_code[4]}
+		or d.WEEKDAY_code =
+		#{weekday_code[5]}
+		or d.WEEKDAY_code = #{weekday_code[6]}
+		or
+		d.WEEKDAY_code = #{weekday_code[7]}
+		or d.WEEKDAY_code =
+		#{weekday_code[8]})
+		and
+		( author_name like
+		#{author_name})
+		and
+		(
+		webtoon_title like #{webtoon_title})
+		order by
+		webtoon_ranking
+	</select>
+
+	<select id="getSearchGenreButton"
+		resultType="com.teamb.domain.WebtoonSearchButtonVO">
+		select * from genre
+	</select>
+
+	<select id="getSearchPlatformButton"
+		resultType="com.teamb.domain.WebtoonSearchButtonVO">
+		select * from PLATFORM
+	</select>
+
+	<select id="getSearchPaymentButton"
+		resultType="com.teamb.domain.WebtoonSearchButtonVO">
+		select * from payment
+	</select>
+
+	<select id="getSearchWeekdayButton"
+		resultType="com.teamb.domain.WebtoonSearchButtonVO">
+		select * from weekday order by weekday_code
+	</select>
+
+	<select id="getWebtoonDetail"
+		resultType="com.teamb.domain.WebtoonVO">
+		select webtoon_title, thumbnail, webtoon_explain from
+		webtoon where
+		webtoon_id=#{webtoon_id}
+	</select>
+
+	<select id="getWebtoonPlatform"
+		resultType="com.teamb.domain.WebtoonVO">
+		select b.platform_code, c.platform_name
+		from webtoon A join
+		platformcharacter B on a.webtoon_id = b.webtoon_id
+		join platform C on
+		b.platform_code = c.platform_code
+		where a.webtoon_id=#{webtoon_id}
+	</select>
+
+	<select id="getWebtoonGenre"
+		resultType="com.teamb.domain.WebtoonVO">
+		select genre_name
+		from wt_gen A join genre B on a.genre_code
+		= b.genre_code
+		where a.webtoon_id=#{webtoon_id}
+	</select>
+
+	<select id="getWebtoonWeekday"
+		resultType="com.teamb.domain.WebtoonVO">
+		select distinct b.weekday_code, c.weekday_day
+		from webtoon A
+		join wt_wd_pl B on a.webtoon_id=b.webtoon_id
+		join weekday C on
+		b.weekday_code=c.weekday_code
+		where a.webtoon_id=#{webtoon_id} and
+		platform_code=#{platform_code}
+		order by b.weekday_code
+	</select>
+
+	<select id="getWebtoonAuthor"
+		resultType="com.teamb.domain.WebtoonVO">
+		select distinct b.author_id, c.author_name
+		from webtoon A
+		join wt_aut B on a.webtoon_id=b.webtoon_id
+		join author C on
+		b.author_id=c.author_id
+		where a.webtoon_id=#{webtoon_id} and
+		b.platform_code=#{platform_code}
+	</select>
+
+
+	<select id="getPlatformChar"
+		resultType="com.teamb.domain.WebtoonVO">
+		select distinct b.payment_code, b.w_adult, url,
+		c.payment_type
+		from webtoon A join platformcharacter B on
+		a.webtoon_id=b.webtoon_id
+		join payment C on
+		b.payment_code=c.payment_code
+		where a.webtoon_id=#{webtoon_id} and
+		b.platform_code=#{platform_code}
+	</select>
+
+	<select id="selectView_count"
+		resultType="com.teamb.domain.WebtoonVO">
+		select view_count
+		from viewcounts
+		where user_id = #{user_id}
+		and webtoon_id = #{webtoon_id}
+	</select>
+
+	<update id="view_count_up">
+		UPDATE viewcounts
+		SET view_count = view_count+1
+		WHERE
+		user_id=#{user_id} and webtoon_id=#{webtoon_id}
+	</update>
+
+	<insert id="view_count_new">
+		INSERT INTO viewcounts (webtoon_id, user_id,
+		view_count)
+		VALUES (#{webtoon_id}, #{user_id}, 1)
+	</insert>
+
+
+	<select id="selectRanking"
+		resultType="com.teamb.domain.WebtoonVO">
+		select webtoon_ranking
+		from webtoon_ranking
+		where
+		webtoon_id=#{webtoon_id}
+	</select>
+
+	<insert id="ranking_new">
+		INSERT INTO webtoon_ranking (webtoon_id,
+		webtoon_ranking,
+		webtoon_popularity)
+		VALUES ( #{webtoon_id} ,1,1)
+	</insert>
+
+	<update id="updatePopularity">
+		UPDATE webtoon_ranking
+		SET webtoon_popularity =
+		(select sum(view_count) from viewcounts where
+		webtoon_id=#{webtoon_id})
+		WHERE webtoon_id=#{webtoon_id}
+	</update>
+
+	<update id="updateRanking">
+		      <![CDATA[
+UPDATE webtoon_ranking wr
+SET wr.webtoon_ranking = (SELECT rnk
+                          FROM (SELECT webtoon_id, DENSE_RANK() OVER (ORDER BY webtoon_popularity DESC) AS rnk
+                                FROM webtoon_ranking) ranked
+                          WHERE ranked.webtoon_id = wr.webtoon_id)
+                                ]]>
+	</update>
+
+	<insert id="insertLike">
+		INSERT INTO likes (user_id, webtoon_id)
+		VALUES (
+		#{user_id}, #{webtoon_id})
+	</insert>
+
+	<delete id="deleteLike">
+		DELETE FROM likes
+		WHERE user_id=#{user_id}
+		and
+		webtoon_id=#{webtoon_id}
+	</delete>
+
+	<insert id="insertFav">
+		INSERT INTO favorite (user_id, webtoon_id)
+		VALUES (
+		#{user_id}, #{webtoon_id})
+	</insert>
+
+	<delete id="deleteFav">
+		DELETE FROM favorite
+		WHERE user_id=#{user_id}
+		and
+		webtoon_id=#{webtoon_id}
+	</delete>
+
+	<select id="getlike" resultType="com.teamb.domain.WebtoonVO">
+		select webtoon_id
+		from likes
+		where webtoon_id=#{webtoon_id} and user_id=#{user_id}
+	</select>
+
+	<select id="getFav" resultType="com.teamb.domain.WebtoonVO">
+		select webtoon_id
+		from favorite
+		where webtoon_id=#{webtoon_id} and user_id=#{user_id}
+	</select>
+
+
+
+	<select id="sameAuthorWT"
+		resultType="com.teamb.domain.WebtoonVO">
+
+		SELECT A.webtoon_id, webtoon_title, thumbnail,
+		webtoon_ranking,
+		webtoon_popularity, MIN(C.platform_code) AS
+		min_platform_code
+		FROM webtoon A
+		JOIN webtoon_ranking B ON A.webtoon_id
+		= B.webtoon_id
+		JOIN platformcharacter C ON A.webtoon_id = C.webtoon_id
+		where a.webtoon_id in (select DISTINCT webtoon_id
+		from wt_aut
+		where
+		author_id in (select DISTINCT author_id from wt_aut where webtoon_id
+		=
+		#{webtoon_id}))
+		GROUP BY A.webtoon_id, webtoon_title, thumbnail,
+		webtoon_ranking,
+		webtoon_popularity
+		ORDER BY webtoon_ranking
+
+	</select>
+
+	<select id="isCommentExist"
+		resultType="com.teamb.domain.WebtoonVO">
+		select user_id
+		from comments
+		where user_id = #{user_id} and
+		webtoon_id = #{webtoon_id}
+	</select>
+
+	<insert id="insertComment">
+		insert into
+		comments (webtoon_id, user_id,
+		comments_content, comments_regdate,
+		comments_w_updatedate)
+		values
+		(#{webtoon_id}, #{user_id}, #{newComment}, sysdate, sysdate)
+	</insert>
+
+
+
+	<!-- ================================== 업로드 =========================================== -->
+	<select id="selectWebtoonId"
+		resultType="com.teamb.domain.WebtoonVO">
+		select webtoon_id
+		from webtoon
+		where webtoon_id =
+		#{webtoon_id}
+	</select>
+
+
+	<update id="updateAdditional">
+		UPDATE platformCharacter
+		SET
+		w_new =
+		#{additional.w_new1},
+		w_rest = #{additional.rest1},
+		w_up =
+		#{additional.up1},
+		w_adult = #{additional.adult1}
+		WHERE webtoon_id =
+		#{webtoon_id}
+		AND platform_code = (SELECT platform_code FROM platform
+		WHERE
+		platform_name = #{platform_name})
+	</update>
+
+
+	<select id="selectAuthor"
+		resultType="com.teamb.domain.WebtoonVO">
+		select author_id
+		from author
+		where author_name =
+		#{author_name}
+	</select>
+
+
+	<insert id="insertAuthor">
+		<selectKey keyProperty="author_id" order="BEFORE"
+			resultType="long">
+			select author_id_seq.nextval from dual
+		</selectKey>
+
+		insert into
+		author (author_id, author_name)
+		values
+		(#{author_id},
+		#{author_name})
+	</insert>
+
+	<select id="selectPlatform"
+		resultType="com.teamb.domain.WebtoonVO">
+		select platform_code
+		from platform
+		where platform_name =
+		#{platform_name}
+	</select>
+
+
+	<insert id="insertPlatform">
+		<selectKey keyProperty="platform_code" order="BEFORE"
+			resultType="long">
+			select platform_code_seq.nextval from dual
+		</selectKey>
+
+		insert into
+		platform (platform_code, platform_name)
+		values
+		(#{platform_code}, #{platform_name})
+	</insert>
+
+	<select id="selectWeekday"
+		resultType="com.teamb.domain.WebtoonVO">
+		select weekday_code
+		from weekday
+		where weekday_day =
+		#{weekday_day}
+	</select>
+
+	<insert id="insertWeekday">
+		<selectKey keyProperty="weekday_code" order="BEFORE"
+			resultType="long">
+			select weekday_code_seq.nextval from dual
+		</selectKey>
+
+		insert into
+		weekday (weekday_code, weekday_day)
+		values
+		(#{weekday_code},
+		#{weekday_day})
+	</insert>
+	
+	
+	
+		<select id="selectWebtoonIdByTitle"
+		resultType="com.teamb.domain.WebtoonVO">
+		select webtoon_id
+		from webtoon
+		where webtoon_title =
+		#{webtoon_title}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+
+	<insert id="insertWebtoon">
+		insert into
+		webtoon (webtoon_id, webtoon_title,
+		thumbnail)
+		values
+		(#{webtoon_id}, #{webtoon_title}, #{thumbnail} )
+	</insert>
+
+
+
+
+
+
+
+
+
+	<insert id="insertPlatformcharacter">
+		insert into
+		Platformcharacter (webtoon_id,
+		platform_code, url, payment_code)
+		values
+		(#{webtoon_id},
+		(select platform_code from platform where platform_name = #{platform_name}),
+		#{url}, #{payment_code})
+	</insert>
+
+	<insert id="insertWt_aut">
+		insert into
+		wt_aut (webtoon_id, platform_code,
+		author_id)
+		values
+		(#{webtoon_id},
+		(select platform_code from platform where platform_name = #{platform_name}),
+		(select author_id from author where author_name = #{author_name}))
+	</insert>
+
+	<insert id="insertWt_wd_pl">
+		insert into
+		wt_wd_pl (webtoon_id, weekday_code,
+		platform_code)
+		values
+		(#{webtoon_id},
+		(select weekday_code from weekday where weekday_day = #{weekday_day}),
+		(select platform_code from platform where platform_name =
+		#{platform_name}))
+	</insert>
+
+
+	<insert id="insertWT_gen">
+		insert into
+		wt_gen (webtoon_id, genre_code)
+		values
+		(#{webtoon_id},
+		(select genre_code from genre where genre_name = #{genre_name}))
+	</insert>
+	
+	
+	
+	
+	
+	<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+	<!-- 플랫폼url가져오기 -->
+	<select id="plurl" resultType="com.teamb.domain.WebtoonVO">
+		select platform_url from platform
+	</select>
+
+	<!-- 웹툰상세보기 -->
+	<select id="detail_tt" resultType="com.teamb.domain.WebtoonVO">
+		select thumbnail,
+		webtoon_title from webtoon where webtoon_id =
+		#{webtoon_id}
+	</select>
+
+	<select id="detail_character"
+		resultType="com.teamb.domain.WebtoonVO">
+		select b.url, b.w_adult, b.w_new, b.w_up, c.payment_type
+		from webtoon A join platformcharacter B on a.webtoon_id = b.webtoon_id
+		join payment C on b.payment_code = c.payment_code
+		where a.webtoon_id =
+		#{webtoon_id} and b.platform_code = #{platform_code}
+	</select>
+
+	<!-- 댓글조회 -->
+	<select id="cmtList" resultType="com.teamb.domain.WebtoonVO">
+		SELECT a.webtoon_id, a.user_id,
+		a.comments_content, a.comments_regdate,
+		b.name from COMMENTS a join
+		member b on a.user_id = b.user_id WHERE
+		a.webtoon_id= #{webtoon_id}
+		ORDER BY comments_regdate
+	</select>
+
+	<!-- 즐겨찾기 -->
+	<select id="fav_getWebtoonList"
+		resultType="com.teamb.domain.WebtoonVO">
+		SELECT a.webtoon_id, b.webtoon_title, b.thumbnail,
+		a.user_id,
+		MIN(c.platform_code) AS min_platform_code
+		FROM favorite a
+		JOIN webtoon b ON a.webtoon_id = b.webtoon_id
+		JOIN platformcharacter c
+		ON a.webtoon_id = c.webtoon_id
+		WHERE a.user_id = #{user_id}
+		GROUP BY
+		a.webtoon_id, b.webtoon_title, b.thumbnail, a.user_id
+	</select>
+
+	<delete id="wt_delete">
+		DELETE from webtoon WHERE webtoon_id= #{webtoon_id}
+	</delete>
+
+	<select id="SimilarWT" resultType="com.teamb.domain.WebtoonVO">
+
+		SELECT A.webtoon_id,
+		webtoon_title, thumbnail, webtoon_ranking,
+		webtoon_popularity,
+		MIN(C.platform_code) AS min_platform_code
+		FROM
+		webtoon A
+		JOIN
+		webtoon_ranking B ON A.webtoon_id = B.webtoon_id
+		JOIN
+		platformcharacter
+		C ON A.webtoon_id = C.webtoon_id
+		where a.webtoon_id
+		in (select DISTINCT
+		webtoon_id
+		from wt_gen
+		where genre_code in (select
+		DISTINCT genre_code
+		from wt_gen where webtoon_id = #{webtoon_id}))
+		GROUP BY A.webtoon_id,
+		webtoon_title, thumbnail, webtoon_ranking,
+		webtoon_popularity
+		ORDER BY
+		webtoon_ranking
+
+	</select>
+	
+	<delete id="wt_cmt_delete"> DELETE from comments WHERE webtoon_id = #{webtoon_id} and user_id = #{user_id} </delete>
+	
+	<update id="wt_cmt_modify"> update comments set comments_content = #{modifyComment}, comments_w_updatedate = sysdate where webtoon_id = #{webtoon_id} and user_id = #{user_id} </update>
+	
+</mapper>
